@@ -1,0 +1,12 @@
+python -u train.py \
+    --model LSTM \
+    --epochs 5 \
+    --lr 0.01 \
+    --weight-decay 0.0 \
+    --batch-size 128 \
+    --hidden_dim 100 \
+    --dropout 0.3 \
+    --num_layers 2 \
+    --useGlove True \
+    --trainable False \
+    --bidirectional True | tee LSTM.log

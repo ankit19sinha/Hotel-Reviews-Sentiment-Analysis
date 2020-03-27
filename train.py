@@ -82,7 +82,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Make iterator for splits
 train_iter, test_iter = data.BucketIterator.splits(
-    (train_data, test_data), batch_size=100, device=device,
+    (train_data, test_data), batch_size=args.batch_size, device=device,
     sort_key = lambda x: len(x.text),
     sort_within_batch=True)
 

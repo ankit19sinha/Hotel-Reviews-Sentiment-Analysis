@@ -9,4 +9,5 @@ python -u train.py \
     --num_layers 2 \
     --useGlove True \
     --trainable False \
-    --bidirectional True | tee GRU.log
+    --bidirectional False \
+    --typeOfPadding padded | tee GRU.log

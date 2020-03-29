@@ -9,4 +9,5 @@ python -u train.py \
     --num_layers 2 \
     --useGlove True \
     --trainable False \
-    --bidirectional True | tee LSTM.log
+    --bidirectional True \
+    --typeOfPadding no_padding | tee LSTM.log

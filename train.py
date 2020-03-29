@@ -35,7 +35,7 @@ parser.add_argument('--num_layers', type=int, metavar='N', help='Number of RNN l
 parser.add_argument('--useGlove', type=bool, help='Flag for using GloVe Representation')
 parser.add_argument('--trainable', type=bool, help='Set requires_grad=False for GloVe representation matrix')
 parser.add_argument('--bidirectional', type=bool, help='Flag to determine uni-directional or bidirectional RNN')
-
+parser.add_argument('--typeOfPadding', choices=['pack_padded', 'padded', 'no_padding'], help='which model to train/evaluate')
 
 # Add more command-line options for other configurations.
 parser.add_argument('--no-cuda', action='store_true', default=False, help='disables CUDA training')
@@ -88,11 +88,11 @@ train_iter, test_iter = data.BucketIterator.splits(
 
 # Initiate models according to the argument
 if args.model == 'vRNN':
-    model = models.vRNN.vRNNModel(embedding_matrix, args.hidden_dim, args.num_layers, args.dropout, args.bidirectional, args.useGlove, args.trainable)
+    model = models.vRNN.vRNNModel(embedding_matrix, args.hidden_dim, args.num_layers, args.dropout, args.bidirectional, args.useGlove, args.trainable, args.typeOfPadding)
 elif args.model == 'GRU':
-    model = models.GRU.gruModel(embedding_matrix, args.hidden_dim, args.num_layers, args.dropout, args.bidirectional, args.useGlove, args.trainable)
+    model = models.GRU.gruModel(embedding_matrix, args.hidden_dim, args.num_layers, args.dropout, args.bidirectional, args.useGlove, args.trainable, args.typeOfPadding)
 elif args.model == 'LSTM':
-    model = models.LSTM.lstmModel(embedding_matrix, args.hidden_dim, args.num_layers, args.dropout, args.bidirectional, args.useGlove, args.trainable)
+    model = models.LSTM.lstmModel(embedding_matrix, args.hidden_dim, args.num_layers, args.dropout, args.bidirectional, args.useGlove, args.trainable, args.typeOfPadding)
 else:
     raise Exception('Unknown model {}'.format(args.model))
 

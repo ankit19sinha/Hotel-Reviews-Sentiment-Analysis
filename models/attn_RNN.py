@@ -3,7 +3,7 @@ import torch.nn as nn
 from torch.nn import functional as F
 
 class attn_RNNModel(nn.Module):
-  def __init__(self, embedding_matrix=None, hidden_dim=None, bidirectional=None, useGlove=None, trainable=None, typeOfPadding="no_padding", typeOfRNN="simple"):
+  def __init__(self, embedding_matrix=None, hidden_dim=None, num_layers=None, dropout=None, bidirectional=None, useGlove=None, trainable=None, typeOfPadding="no_padding", typeOfRNN="simple"):
     super().__init__()
     # Create an embedding layer of dimension vocabulary size * 100
     self.embeddingLayer = nn.Embedding(len(embedding_matrix), 100)
@@ -23,21 +23,28 @@ class attn_RNNModel(nn.Module):
         self.rnnLayer = nn.RNN(input_size = 100, 
                            hidden_size = hidden_dim,
                            batch_first = True,
+                           num_layers = num_layers,
+                           dropout = dropout,
                            bidirectional = bidirectional)
     elif typeOfRNN == "GRU":
         self.rnnLayer = nn.GRU(input_size = 100, 
                            hidden_size = hidden_dim,
                            batch_first = True,
+                           num_layers = num_layers,
+                           dropout = dropout,
                            bidirectional = bidirectional)
     else:
         self.rnnLayer = nn.LSTM(input_size = 100, 
                            hidden_size = hidden_dim,
                            batch_first = True,
+                           num_layers = num_layers,
+                           dropout = dropout,
                            bidirectional = bidirectional)
     
     # Initialize variables to define the fully-connected layer
     self.num_directions = 2 if bidirectional else 1
     self.typeOfPadding = typeOfPadding
+    self.num_layers = num_layers
     self.hidden_size = hidden_dim
     
     # Initialize the learnable attention weight
@@ -81,9 +88,13 @@ class attn_RNNModel(nn.Module):
   def attention(self, output, hidden_n):
     # output has the following dimension: [batch, seq_len, num_directions * hidden_size]
     # And it contains all hidden states
-    # Final hidden state is of [batch, 1 * num_directions, hidden_size]
-    # Rearrange hidden state to [batch, num_directions * hidden_size, 1]
-    hidden_n = hidden_n.view(-1, self.num_directions * self.hidden_size)
+    # Final hidden state is of [batch, num_layers * num_directions, hidden_size]
+    
+    # Rearrange hidden state to [num_layers, batch, num_directions * hidden_size]
+    hidden_n = hidden_n.view(self.num_layers, -1, self.num_directions * self.hidden_size)
+    
+    # Take the hidden state only from the last layer
+    hidden_n = hidden_n[-1::].squeeze()
 
     # Pass the hidden state to the attention weight layer
     x = self.attn_weight(hidden_n)

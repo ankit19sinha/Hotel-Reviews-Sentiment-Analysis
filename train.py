@@ -18,6 +18,7 @@ from torchtext import data
 import models.vRNN 
 import models.GRU
 import models.LSTM
+import models.attn_RNN
 
 # Initilize a command-line option parser.
 parser = argparse.ArgumentParser(description='Sentiment Analysis')
@@ -28,14 +29,15 @@ parser.add_argument('--lr', type=float, metavar='LR', help='learning rate')
 parser.add_argument('--weight-decay', type=float, default=0.0, help='Weight decay hyperparameter')
 parser.add_argument('--batch-size', type=int, metavar='N', help='Input batch size for training')
 parser.add_argument('--epochs', type=int, metavar='N', help='Number of epochs to train')
-parser.add_argument('--model', choices=['vRNN', 'GRU', 'LSTM'], help='which model to train/evaluate')
+parser.add_argument('--model', choices=['vRNN', 'GRU', 'LSTM', 'attention'], help='which model to train/evaluate')
 parser.add_argument('--hidden_dim', type=int, help='number of hidden features')
 parser.add_argument('--dropout', type=float, default=0.0, help='Dropout probability to be applied')
 parser.add_argument('--num_layers', type=int, metavar='N', help='Number of RNN layers')
 parser.add_argument('--useGlove', type=bool, help='Flag for using GloVe Representation')
 parser.add_argument('--trainable', type=bool, help='Set requires_grad=False for GloVe representation matrix')
 parser.add_argument('--bidirectional', type=bool, help='Flag to determine uni-directional or bidirectional RNN')
-parser.add_argument('--typeOfPadding', choices=['pack_padded', 'padded', 'no_padding'], help='which model to train/evaluate')
+parser.add_argument('--typeOfPadding', choices=['pack_padded', 'padded', 'no_padding'], help='which type of padding to use')
+parser.add_argument('--typeOfRNN', choices=['simple', 'GRU', 'LSTM'], help='which type of RNN to use with attention')
 
 # Add more command-line options for other configurations.
 parser.add_argument('--no-cuda', action='store_true', default=False, help='disables CUDA training')
@@ -93,6 +95,8 @@ elif args.model == 'GRU':
     model = models.GRU.gruModel(embedding_matrix, args.hidden_dim, args.num_layers, args.dropout, args.bidirectional, args.useGlove, args.trainable, args.typeOfPadding)
 elif args.model == 'LSTM':
     model = models.LSTM.lstmModel(embedding_matrix, args.hidden_dim, args.num_layers, args.dropout, args.bidirectional, args.useGlove, args.trainable, args.typeOfPadding)
+elif args.model == 'attention':
+    model = models.attn_RNN.attn_RNNModel(embedding_matrix, args.hidden_dim, args.bidirectional, args.useGlove, args.trainable, args.typeOfPadding, args.typeOfRNN)
 else:
     raise Exception('Unknown model {}'.format(args.model))
 

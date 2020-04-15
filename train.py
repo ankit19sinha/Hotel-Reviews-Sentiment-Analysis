@@ -96,7 +96,7 @@ elif args.model == 'GRU':
 elif args.model == 'LSTM':
     model = models.LSTM.lstmModel(embedding_matrix, args.hidden_dim, args.num_layers, args.dropout, args.bidirectional, args.useGlove, args.trainable, args.typeOfPadding)
 elif args.model == 'attention':
-    model = models.attn_RNN.attn_RNNModel(embedding_matrix, args.hidden_dim, args.bidirectional, args.useGlove, args.trainable, args.typeOfPadding, args.typeOfRNN)
+    model = models.attn_RNN.attn_RNNModel(embedding_matrix, args.hidden_dim, args.num_layers, args.dropout, args.bidirectional, args.useGlove, args.trainable, args.typeOfPadding, args.typeOfRNN)
 else:
     raise Exception('Unknown model {}'.format(args.model))
 

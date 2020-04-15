@@ -8,5 +8,7 @@ python -u train.py \
     --useGlove True \
     --trainable True \
     --bidirectional True \
+    --num_layers 3 \
+    --dropout 0.3 \
     --typeOfRNN simple \
     --typeOfPadding no_padding | tee attnRNN.log

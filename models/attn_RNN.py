@@ -3,7 +3,7 @@ import torch.nn as nn
 from torch.nn import functional as F
 
 class attn_RNNModel(nn.Module):
-  def __init__(self, embedding_matrix, hidden_dim, bidirectional, useGlove, trainable, typeOfPadding="no_padding", typeOfRNN="simple"):
+  def __init__(self, embedding_matrix=None, hidden_dim=None, bidirectional=None, useGlove=None, trainable=None, typeOfPadding="no_padding", typeOfRNN="simple"):
     super().__init__()
     # Create an embedding layer of dimension vocabulary size * 100
     self.embeddingLayer = nn.Embedding(len(embedding_matrix), 100)

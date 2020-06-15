@@ -3,11 +3,11 @@ python -u train.py \
     --epochs 5 \
     --lr 0.01 \
     --weight-decay 0.0 \
-    --batch-size 128 \
+    --batch-size 500 \
     --hidden_dim 100 \
-    --dropout 0.3 \
-    --num_layers 2 \
-    --useGlove True \
+    --dropout 0.5 \
+    --num_layers 3 \
+    --useGlove False \
     --trainable False \
-    --bidirectional True \
+    --bidirectional False \
     --typeOfPadding no_padding | tee LSTM.log

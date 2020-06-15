@@ -38,6 +38,7 @@ parser.add_argument('--trainable', type=bool, help='Set requires_grad=False for 
 parser.add_argument('--bidirectional', type=bool, help='Flag to determine uni-directional or bidirectional RNN')
 parser.add_argument('--typeOfPadding', choices=['pack_padded', 'padded', 'no_padding'], help='which type of padding to use')
 parser.add_argument('--typeOfRNN', choices=['simple', 'GRU', 'LSTM'], help='which type of RNN to use with attention')
+parser.add_argument('--typeOfAttention', choices=['multiplicative', 'additive'], help='which type of attention to use')
 
 # Add more command-line options for other configurations.
 parser.add_argument('--no-cuda', action='store_true', default=False, help='disables CUDA training')
@@ -70,7 +71,7 @@ reviews_data = data.TabularDataset(path = 'hotel_reviews_processed.csv',
                                    skip_header = True)
 
 # Split training and testing data
-train_data, test_data = reviews_data.split(split_ratio=0.7, random_state = random.seed(args.seed))
+train_data, test_data = reviews_data.split(split_ratio=0.75, random_state = random.seed(args.seed))
 
 # Build the vocabulary
 TEXT.build_vocab(train_data, min_freq = 3, vectors="glove.6B.100d")
@@ -96,7 +97,7 @@ elif args.model == 'GRU':
 elif args.model == 'LSTM':
     model = models.LSTM.lstmModel(embedding_matrix, args.hidden_dim, args.num_layers, args.dropout, args.bidirectional, args.useGlove, args.trainable, args.typeOfPadding)
 elif args.model == 'attention':
-    model = models.attn_RNN.attn_RNNModel(embedding_matrix, args.hidden_dim, args.num_layers, args.dropout, args.bidirectional, args.useGlove, args.trainable, args.typeOfPadding, args.typeOfRNN)
+    model = models.attn_RNN.attn_RNNModel(embedding_matrix, args.hidden_dim, args.num_layers, args.dropout, args.bidirectional, args.useGlove, args.trainable, args.typeOfPadding, args.typeOfRNN, args.typeOfAttention)
 else:
     raise Exception('Unknown model {}'.format(args.model))
 

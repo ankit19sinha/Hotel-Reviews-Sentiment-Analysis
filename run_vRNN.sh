@@ -1,13 +1,13 @@
 python -u train.py \
     --model vRNN \
     --epochs 5 \
-    --lr 0.1 \
+    --lr 0.01 \
     --weight-decay 0.0 \
-    --batch-size 128 \
-    --hidden_dim 50 \
+    --batch-size 1000 \
+    --hidden_dim 150 \
     --dropout 0.0 \
     --num_layers 1 \
-    --useGlove False \
-    --trainable False \
-    --bidirectional False \
-    --typeOfPadding padded | tee vRNN.log
+    --useGlove True \
+    --trainable True \
+    --bidirectional True \
+    --typeOfPadding no_padding | tee vRNN.log

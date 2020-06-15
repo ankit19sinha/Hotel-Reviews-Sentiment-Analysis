@@ -3,7 +3,7 @@ import torch.nn as nn
 from torch.nn import functional as F
 
 class attn_RNNModel(nn.Module):
-  def __init__(self, embedding_matrix=None, hidden_dim=None, num_layers=None, dropout=None, bidirectional=None, useGlove=None, trainable=None, typeOfPadding="no_padding", typeOfRNN="simple"):
+  def __init__(self, embedding_matrix=None, hidden_dim=None, num_layers=None, dropout=None, bidirectional=None, useGlove=None, trainable=None, typeOfPadding="no_padding", typeOfRNN="simple", typeOfAttention="multiplicative"):
     super().__init__()
     # Create an embedding layer of dimension vocabulary size * 100
     self.embeddingLayer = nn.Embedding(len(embedding_matrix), 100)
@@ -44,11 +44,16 @@ class attn_RNNModel(nn.Module):
     # Initialize variables to define the fully-connected layer
     self.num_directions = 2 if bidirectional else 1
     self.typeOfPadding = typeOfPadding
+    self.typeOfAttention = typeOfAttention
     self.num_layers = num_layers
     self.hidden_size = hidden_dim
     
-    # Initialize the learnable attention weight
-    self.attn_weight = nn.Linear(hidden_dim * self.num_directions, hidden_dim * self.num_directions)
+    # Initialize the learnable attention weights
+    if self.typeOfAttention == "multiplicative":
+        self.attn_weight = nn.Linear(hidden_dim * self.num_directions, hidden_dim * self.num_directions)
+    else:
+        self.Wh = nn.Linear(self.hidden_size * self.num_directions, self.hidden_size * self.num_directions)
+        self.Ws = nn.Linear(self.hidden_size * self.num_directions, self.hidden_size * self.num_directions)
 
     # Initialize a fully-connected layer
     self.fc = nn.Linear(hidden_dim * self.num_directions, 1)
@@ -87,21 +92,49 @@ class attn_RNNModel(nn.Module):
 
   def attention(self, output, hidden_n):
     # output has the following dimension: [batch, seq_len, num_directions * hidden_size]
-    # And it contains all hidden states
+    # And it contains all output states
     # Final hidden state is of [batch, num_layers * num_directions, hidden_size]
     
     # Rearrange hidden state to [num_layers, batch, num_directions * hidden_size]
     hidden_n = hidden_n.view(self.num_layers, -1, self.num_directions * self.hidden_size)
     
-    # Take the hidden state only from the last layer
-    hidden_n = hidden_n[-1::].squeeze()
+    if self.typeOfAttention == "multiplicative":
+        # Take the hidden state only from the last layer
+        # s = hidden_n = [batch, direction * hidden]
+        # W = [direction * hidden, direction * hidden]
+        # x = [batch, direction * hidden]
+        hidden_n = hidden_n[-1::].squeeze()
+    
+        # Pass the hidden state to the attention weight layer
+        x = self.attn_weight(hidden_n)
+    
+        # Batch mulitply output and attention's hidden state
+        # output = [batch, seq_len, direction * hidden]
+        # x = [batch, direction * hidden, 1]
+        # attn_scores has the dimension of [batch, seq_len, 1]
+        attn_scores = torch.bmm(output, x.unsqueeze(-1))
+    
+    else:
+        # Initialize attention parameter
+        self.attn_v = nn.Parameter(torch.FloatTensor(output.shape[0], self.num_directions * self.hidden_size)).cuda()
+        
+        # Rearrange hidden_n to [batch, 1, direction * hidden]
+        hidden_n = hidden_n[-1::].permute(1, 0, 2)
 
-    # Pass the hidden state to the attention weight layer
-    x = self.attn_weight(hidden_n)
+        # Additive attention = v * tanh(Wh * output + Ws * hidden_n)
+        # Compute product of Wh and outputs from RNN
+        x = self.Wh(output)
+        
+        # Compute product of Ws and final hidden state
+        y = self.Ws(hidden_n)
+        
+        # z has the dimension of [batch, seq_len,  direction * hidden]
+        z = torch.tanh(x + y)
 
-    # Batch mulitply output and attention's hidden state
-    # attn_scores has the dimension of [batch, seq_len, 1]
-    attn_scores = torch.bmm(output, x.unsqueeze(-1))
+        # Batch mulitply z and attention parameter v
+        # attn_scores has the dimension of [batch, seq_len, 1]
+        attn_scores = torch.bmm(z, self.attn_v.unsqueeze(-1))
+    
     
     # Apply softmax on seq_len to get attention distribution
     attn_distb = F.softmax(attn_scores, 1)

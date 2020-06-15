@@ -1,14 +1,15 @@
 python -u train.py \
     --model attention \
     --epochs 5 \
-    --lr 0.01 \
+    --lr 0.0001 \
     --weight-decay 0.0 \
     --batch-size 128 \
-    --hidden_dim 100 \
+    --hidden_dim 80 \
     --useGlove True \
     --trainable True \
     --bidirectional True \
     --num_layers 3 \
-    --dropout 0.3 \
-    --typeOfRNN simple \
+    --dropout 0.4 \
+    --typeOfRNN LSTM \
+    --typeOfAttention multiplicative \
     --typeOfPadding no_padding | tee attnRNN.log

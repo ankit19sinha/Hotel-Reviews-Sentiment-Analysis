@@ -8,20 +8,20 @@ This project consists of the following files:
 4. Shell scripts: run_vRNN.sh, run_GRU.sh, run_LSTM.sh, run_attnRNN.sh
 
 Following are the parameters that can be set for the models:
-lr: learning rate
-weight-decay: Weight decay hyperparameter
-batch-size: Input batch size for training
-epochs: Number of epochs to train
-model ('vRNN', 'GRU', 'LSTM','attention'): which model to train/evaluate
-hidden_dim: number of hidden features
-dropout: Dropout probability to be applied
-num_layers: Number of RNN layers
-useGlove: Flag for using GloVe Representation
-trainable: Set requires_grad=False for GloVe representation matrix
-bidirectional: Flag to determine uni-directional or bidirectional RNN
-typeOfPadding ('pack_padded', 'padded', 'no_padding'): which type of padding to use
-typeOfRNN ('simple', 'GRU', 'LSTM'): which type of RNN to use with attention
-typeOfAttention ('multiplicative', 'additive'): which type of attention to use
+1. lr: learning rate
+2. weight-decay: Weight decay hyperparameter
+3. batch-size: Input batch size for training
+4. epochs: Number of epochs to train
+5. model ('vRNN', 'GRU', 'LSTM','attention'): which model to train/evaluate
+6. hidden_dim: number of hidden features
+7. dropout: Dropout probability to be applied
+8. num_layers: Number of RNN layers
+9. useGlove: Flag for using GloVe Representation
+10. trainable: Set requires_grad=False for GloVe representation matrix
+11. bidirectional: Flag to determine uni-directional or bidirectional RNN
+12. typeOfPadding ('pack_padded', 'padded', 'no_padding'): which type of padding to use
+13. typeOfRNN ('simple', 'GRU', 'LSTM'): which type of RNN to use with attention
+14. typeOfAttention ('multiplicative', 'additive'): which type of attention to use
 
 Instructions for running a model:
 1. Set desired parameters in the model's shell script

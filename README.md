@@ -31,4 +31,8 @@ Instructions for running a model:
 5. A log file and saved model with .pt extension are created automatically for the current execution
 
 NOTE:
-Please take note that before executing additive attention model you need to run one of the other non-attention models to avoid an unexplained runtime error. I tried to resolve this runtime error of binary cross entropy loss but I couldn't figure out why it would throw that error every time only on the first run. Because the raw dataset file is over 200 MB in size, I wasn't able to upload it. The file can be downloaded and preprocessed using preprocessing.py file.
+Please take note that before executing additive attention model you need to run one of the other non-attention models to avoid an unexplained runtime error. I tried to resolve this runtime error of binary cross entropy loss but I couldn't figure out why it would throw that error every time only on the first run. Because the raw dataset file is over 200 MB in size, I wasn't able to upload it. The file can be downloaded and preprocessed using preprocessing.py file. 
+
+Project Collaborators:
+Ankit Sinha
+Tanmay Sharma (https://github.com/TANMAYSHARMA/)
